@@ -21,6 +21,18 @@ def calc_f1(y_test, y_pred):
     f1 = f1_score(y_test, y_pred)
     return f1
 
+def calc_sensitivity(y_test, y_pred):
+    cm = confusion_matrix(y_test, y_pred)
+    tn, fp, fn, tp = cm.ravel()
+
+    return tp / (tp + fn) if (tp + fn) > 0 else 0
+
+def calc_specificity(y_test, y_pred):
+    cm = confusion_matrix(y_test, y_pred)
+    tn, fp, fn, tp = cm.ravel()
+
+    return tn / (tn + fp) if (tn + fp) > 0 else 0
+
 def generate_confusion_matrix(y_test, y_pred, img_path=None):
     cm = confusion_matrix(y_test, y_pred)
 
