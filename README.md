@@ -36,7 +36,12 @@ You can just look at the notebook [model_development.ipynb](model_development.ip
 
 - In this work, I want to focus on models that I have high interpretability as we should deal with GDPR. That is why I picked those models. Everything must be clearly explained to customers. A common problem that I can see while working this task is we have to come up with a threshold. Sometimes, it can be tricky.
 
-- I splitted the development data to 7/3, meaning that 30% of the data is reserved for test. To ensure fair evaluation, I test all models (listed below) on the same test data. As you will see in the notebook, the false negative install that LR, DT, and XGB made have pretty small impact to the system, so I think the process can be decleared as done. In terms of performance, I come with the following: supervised > semi-supervised > unsupervised. Of course, it comes with a major trade-off - labelling the data.
+- I splitted the development data to 7/3, meaning that 30% of the data is reserved for test. To ensure fair evaluation, I test all models (listed below) on the same test data. As you will see in the notebook, the false negative install that LR, DT, and XGB made have pretty small impact to the system, so I think the process can be decleared as done. In terms of performance, I come with the following: supervised > semi-supervised > unsupervised as shown below (sorted by AUC-PR). Of course, this result comes with a major trade-off - labelling the data.
+
+<div align="center">
+  <img src="./confusion_matrices.png" alt="Pipeline" style="width: 90%;">
+</div>
+
 
 - I have been talking about performance and I mean accuracy measured by AUC-PR, AUC-ROC, F1, etc.. As I explain in the EDA part, here is my motivation. Distinguishing fraud and non-fraud transactions is basically a binary classification problem. There are a few we can think of the following: F1, AUC-ROC, or AUC-PR. I prefer to use AUC-PR and below are some reasonsings:
    + F1: this can give good scores to ML models even if anomalies are missed and we don't want it! In addition, it's senstive to thresholds. A small change in the threshold can result in significant difference. It's sometimes difficult to come up with a reasonable threshold and we have to frequently adjust thresholds due to concept drift (i.e., unexpected data distribution changes - one of my ML project is about this [3]).
