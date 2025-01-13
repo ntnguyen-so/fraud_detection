@@ -187,19 +187,6 @@ class FeatureEngineering:
 
         # Save characteristics
         joblib.dump(self.feature_statistics, self.feature_statistic_resource)
-
-        if False:
-            self.data = self.data[['amount', 'flowname', 'bankfees', 'sender_age', 'receiver_age',
-                                   'amount_outlier', 'amount_zscore', 'sender_age_zscore',
-                                   'receiver_age_zscore', 'amount_zscore_sender_age',
-                                   'amount_zscore_receiver_age', 'bankfees_zscore_sender_age',
-                                   'bankfees_zscore_receiver_age', 'sender_age_zscore_receiver_age',
-                                   'fee_per_transaction', 'age_diff_sender_receiver',
-                                   'transaction_frequency', 'is_pension',
-                                   'sender_total_failed_transactions', 'flow_fraud_rate', 'weekday', 'day',
-                                   'month', 'hour', 'transaction_time_diff', 'seconds_diff_last_failed',
-                                   'pensionpaid_transaction_days_diff']]
-
         return self.data
 
     def transform(self):
