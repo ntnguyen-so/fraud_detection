@@ -9,6 +9,8 @@ If you want to reproduce results, install necessary labraries.
 pip install -r requirements.txt
 ```
 
+Then, go to `assets` and extract `feature_engineering_res.tar.gz`
+
 ## Summary
 My work in this project is done in two steps:
 - Explanatory Data Analysis and Feature Engineering (see [here](explanatory_data_analysis.ipynb))
@@ -52,7 +54,7 @@ You can just look at the notebook [model_development.ipynb](model_development.ip
 [3] Nguyen, N.T., Heldal, R. and Pelliccione, P., 2024. Concept-drift-adaptive anomaly detector for marine sensor data streams. Internet of Things, p.101414. https://www.sciencedirect.com/science/article/pii/S254266052400355X
 
 ### Checking results
-You can look at folder results/ where I store confusion matrixes of LR and XGB on the test data. In addition, you can also find the reports ranking fradulent probability of transactions from those models. These are the ones that yield the best results during the development. 
+You can look at folder `results` where I store confusion matrixes of LR and XGB on the test data. In addition, you can also find the reports ranking fradulent probability of transactions from those models. These are the ones that yield the best results during the development. 
 
 For the reports, I tried to reserve the original structure of the data. Then, I added three columns at the end: 
 - fraud_predicted: predicted label of the transaction (1: fraud, 0: normal).
