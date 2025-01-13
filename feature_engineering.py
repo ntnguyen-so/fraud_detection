@@ -15,6 +15,7 @@ class FeatureEngineering:
         self.flowname_encoder = 'assets/flowname_encoder.pkl'
 
         self.feature_statistics = dict()
+        self.col_order = ['id', 'amount', 'flowname', 'bankfees', 'sender_age', 'receiver_age', 'fraud', 'amount_outlier', 'amount_zscore', 'sender_age_zscore', 'receiver_age_zscore', 'amount_zscore_sender_age', 'amount_zscore_receiver_age', 'bankfees_zscore_sender_age', 'bankfees_zscore_receiver_age', 'fee_per_transaction', 'sender_age_zscore_receiver_age', 'age_diff_sender_receiver', 'transaction_frequency', 'transaction_time_diff', 'hour', 'weekday', 'day', 'month', 'is_pension', 'pensionpaid_transaction_days_diff', 'sender_total_failed_transactions', 'seconds_diff_last_failed', 'flow_fraud_rate']
 
     def convert_type(self):
         self.data.timestamp = pd.to_datetime(self.data.timestamp)
@@ -204,6 +205,7 @@ class FeatureEngineering:
         self.generate_custom_features()
         self.extract_time_components()
         self.cleanup()
+        self.data = self.data[self.col_order]
 
 
         return self.data
