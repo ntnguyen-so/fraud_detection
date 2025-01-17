@@ -32,17 +32,7 @@ class FeatureEngineering:
         self.data = self.data.sort_values('timestamp')
 
     def indicate_outlier(self, features): 
-        for feature in features:
-            if self.is_fit_running:
-                Q1 = self.data[feature].quantile(0.25)
-                Q3 = self.data[feature].quantile(0.75)
-                IQR = Q3 - Q1
-                self.feature_statistics[feature + '_outlier'] = {'Q1': Q1, 'Q3': Q3, 'IQR': IQR}
-            else:
-                Q1 = self.feature_statistics[feature + '_outlier']['Q1']
-                Q3 = self.feature_statistics[feature + '_outlier']['Q3']
-                IQR = self.feature_statistics[feature + '_outlier']['IQR']
-                
+        for feature in features:                
             Q1 = self.data[feature].quantile(0.25)
             Q3 = self.data[feature].quantile(0.75)
             IQR = Q3 - Q1
@@ -53,17 +43,8 @@ class FeatureEngineering:
 
     def calc_z_score_indiv_feature(self, features): # [amount, sender_age, receiver_age]
         for feature in features:
-            if False:
-                if self.is_fit_running:
-                    mean = self.data[feature].mean()
-                    std = self.data[feature].std()
-                    self.feature_statistics[feature + '_zscore'] = {'mean': mean, 'std': std}
-                else:
-                    mean = self.feature_statistics[feature + '_zscore']['mean']
-                    std = self.feature_statistics[feature + '_zscore']['std']
-            else:
-                mean = self.data[feature].mean()
-                std = self.data[feature].std()
+            mean = self.data[feature].mean()
+            std = self.data[feature].std()
 
             self.data[feature + '_zscore'] = (self.data[feature] - mean) / std
 
