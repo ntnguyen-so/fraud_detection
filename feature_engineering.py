@@ -15,7 +15,17 @@ class FeatureEngineering:
         self.flowname_encoder = 'assets/flowname_encoder.pkl'
 
         self.feature_statistics = dict()
-        self.col_order = ['id', 'amount', 'flowname', 'bankfees', 'sender_age', 'receiver_age', 'fraud', 'amount_outlier', 'amount_zscore', 'sender_age_zscore', 'receiver_age_zscore', 'amount_zscore_sender_age', 'amount_zscore_receiver_age', 'bankfees_zscore_sender_age', 'bankfees_zscore_receiver_age', 'fee_per_transaction', 'sender_age_zscore_receiver_age', 'age_diff_sender_receiver', 'transaction_frequency', 'transaction_time_diff', 'hour', 'weekday', 'day', 'month', 'is_pension', 'pensionpaid_transaction_days_diff', 'sender_total_failed_transactions', 'seconds_diff_last_failed', 'flow_fraud_rate']
+        
+        self.col_order = ['id', 'amount', 'status', 'flowname', 'bankfees', 'sender_age',
+       'receiver_age', 'fraud', 'amount_outlier', 'amount_zscore',
+       'sender_age_zscore', 'receiver_age_zscore', 'amount_zscore_sender_age',
+       'amount_zscore_receiver_age', 'bankfees_zscore_sender_age',
+       'bankfees_zscore_receiver_age', 'fee_per_transaction',
+       'sender_age_zscore_receiver_age', 'age_diff_sender_receiver',
+       'transaction_frequency', 'transaction_time_diff', 'hour', 'weekday',
+       'day', 'is_pension', 'pensionpaid_transaction_days_diff',
+       'sender_total_failed_transactions', 'seconds_diff_last_failed',
+       'flow_fraud_rate']
 
     def convert_type(self):
         self.data.timestamp = pd.to_datetime(self.data.timestamp)
@@ -33,6 +43,9 @@ class FeatureEngineering:
                 Q3 = self.feature_statistics[feature + '_outlier']['Q3']
                 IQR = self.feature_statistics[feature + '_outlier']['IQR']
                 
+            Q1 = self.data[feature].quantile(0.25)
+            Q3 = self.data[feature].quantile(0.75)
+            IQR = Q3 - Q1
             outliers = self.data[(self.data[feature] < (Q1 - 1.5 * IQR)) | (self.data[feature] > (Q3 + 1.5 * IQR))]
             self.data[feature + '_outlier'] = ((self.data[feature] < (Q1 - 1.5 * IQR)) | (self.data[feature] > (Q3 + 1.5 * IQR))).astype(int)
 
@@ -40,13 +53,17 @@ class FeatureEngineering:
 
     def calc_z_score_indiv_feature(self, features): # [amount, sender_age, receiver_age]
         for feature in features:
-            if self.is_fit_running:
+            if False:
+                if self.is_fit_running:
+                    mean = self.data[feature].mean()
+                    std = self.data[feature].std()
+                    self.feature_statistics[feature + '_zscore'] = {'mean': mean, 'std': std}
+                else:
+                    mean = self.feature_statistics[feature + '_zscore']['mean']
+                    std = self.feature_statistics[feature + '_zscore']['std']
+            else:
                 mean = self.data[feature].mean()
                 std = self.data[feature].std()
-                self.feature_statistics[feature + '_zscore'] = {'mean': mean, 'std': std}
-            else:
-                mean = self.feature_statistics[feature + '_zscore']['mean']
-                std = self.feature_statistics[feature + '_zscore']['std']
 
             self.data[feature + '_zscore'] = (self.data[feature] - mean) / std
 
@@ -55,15 +72,9 @@ class FeatureEngineering:
     def calc_z_score_pair(self, features_pairs): 
         for features_pair in features_pairs:
             first, second = features_pair
-            if self.is_fit_running:
-                mean = self.data.groupby(second)[first].transform("mean")
-                std = self.data.groupby(second)[first].transform("std")
-                self.feature_statistics[f"{first}_zscore_{second}"] = {'mean': mean, 'std': std}
-                self.data[first + '_zscore_' + second] = (self.data[first] - mean) / std
-                self.data[first + '_zscore_' + second] = self.data[first + '_zscore_' + second].fillna(0)
-            else:
-                mean = self.feature_statistics[f"{first}_zscore_{second}"]['mean']
-                std = self.feature_statistics[f"{first}_zscore_{second}"]['std'] 
+            
+            mean = self.data.groupby(second)[first].transform("mean")
+            std = self.data.groupby(second)[first].transform("std")
 
             self.data[first + '_zscore_' + second] = (self.data[first] - mean) / std
             self.data[first + '_zscore_' + second] = self.data[first + '_zscore_' + second].fillna(0)
@@ -99,6 +110,9 @@ class FeatureEngineering:
         self.data = self._encode_flowname()
             
         self.data['flow_fraud_rate'] = self.data.groupby('flowname')['fraud'].transform('sum') / self.data.groupby('flowname')['flowname'].transform('count')
+
+        status_types = ['PaymentFailedV0', 'PaymentSucceededV0']
+        self.data['status'] = pd.Categorical(self.data['status'], categories=status_types).codes        
         
         return self.data
 
@@ -156,7 +170,7 @@ class FeatureEngineering:
     def extract_time_components(self):
         self.data['weekday'] = self.data['timestamp'].dt.weekday
         self.data['day'] = self.data['timestamp'].dt.day
-        self.data['month'] = self.data['timestamp'].dt.month
+        #self.data['month'] = self.data['timestamp'].dt.month
         self.data['hour'] = self.data['timestamp'].dt.hour
 
         self.data = self.calc_diff_transaction()
@@ -166,7 +180,8 @@ class FeatureEngineering:
         return self.data
 
     def cleanup(self):
-        self.data.drop(columns=['sender_id', 'receiver_id', 'status', 'timestamp'], axis=1, inplace=True)
+        #self.data.drop(columns=['sender_id', 'receiver_id', 'status', 'timestamp'], axis=1, inplace=True)
+        self.data.drop(columns=['sender_id', 'receiver_id', 'timestamp'], axis=1, inplace=True)
         return self.data
         
     def fit_transform(self):
@@ -187,7 +202,7 @@ class FeatureEngineering:
         self.cleanup()
 
         # Save characteristics
-        joblib.dump(self.feature_statistics, self.feature_statistic_resource)
+        #joblib.dump(self.feature_statistics, self.feature_statistic_resource)
         return self.data
 
     def transform(self):
@@ -203,7 +218,7 @@ class FeatureEngineering:
             ['sender_age', 'receiver_age']
         ])
         self.generate_custom_features()
-        self.extract_time_components()
+        self.extract_time_components()        
         self.cleanup()
         self.data = self.data[self.col_order]
 
