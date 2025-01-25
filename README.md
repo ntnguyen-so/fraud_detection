@@ -14,7 +14,7 @@ Then, go to `assets` and extract `feature_engineering_res.tar.gz`
 ## Summary
 My work in this project is done in two steps:
 - Explanatory Data Analysis and Feature Engineering (see [here](explanatory_data_analysis.ipynb))
-- Model Development (see [here](model_development.ipynb))
+- Model Development (see [here](model_development_dev_phase.ipynb))
 
 ### Explanatory Data Analysis
 For the first step, you will see I perform the EDA and feature engineering pretty carefully because I believe if we incorporate business logic of the data well, then simple ML models can perform very well. My philosophy for this is simple > complex. The work in this project is inspired by my own experience and a case from Amazon (I hope the story was true):
@@ -26,7 +26,7 @@ While doing EDA, I also propose new features to be engineered. I believe develop
 You can just look at the notebook [explanatory_data_analysis.ipynb](explanatory_data_analysis.ipynb) where I walked you through the whole process.
 
 ### Model development
-You can just look at the notebook [model_development.ipynb](model_development.ipynb) where I walked you through the whole process.
+You can just look at the notebook [model_development.ipynb](model_development_dev_phase.ipynb) where I walked you through the whole process.
 - <b> Data sampling:</b> As what I can see from the EDA step, the data we are using is very skewed. Then, I thought of doing some data oversampling/undersampling strategies. Specifically, I tried SMOTE, which increases minority class (in this case, fraudulent transactions). I do not think it is a good idea to perform undersampling as the number of fraudulent samples is too small (97).
 
 - <b>Choice of ML model:</b> The data is labelled. Natually, we can think of supervised techniques. However, I also would like to see the performance of unsupervised and semi-supervised learning models. In short:
