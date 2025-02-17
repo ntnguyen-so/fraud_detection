@@ -1,4 +1,4 @@
-# Technical interview case for Data Scientist position at a Norwegian payment provider company.
+# Technical interview case for Data Scientist position at an online financial transaction service provider company in the Nordic region.
 
 ## Task Description
 Refer to [Task Description](task_description.md) for the original task description from the company
